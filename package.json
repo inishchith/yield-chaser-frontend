@@ -8,8 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@portis/web3": "^4.0.5",
     "core-js": "^3.6.5",
-    "vue": "^3.0.0"
+    "vue": "^3.0.0",
+    "web3": "^1.4.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

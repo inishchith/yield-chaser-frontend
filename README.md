@@ -22,3 +22,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Notes
+
+- [Potris Wallet Quick Start](https://docs.portis.io/#/quick-start)
