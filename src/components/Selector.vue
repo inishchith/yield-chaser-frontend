@@ -1,8 +1,12 @@
 <template>
     <div id="asset-bar">
-        <span @click="removeChip()"> Remove </span>
         <div :key="asset.id" v-for="asset in assets">
-            <h1> {{ asset.name }} </h1>
+            <span
+                @click="$emit('deselect-asset', asset.id)"
+                :class="[asset.selected ? 'selected': '',]">
+                {{ asset.name }}
+            </span>
+            <span @click="$emit('remove-asset', asset.id)" :class="[asset.selected ? 'selected': '',]"> X </span>
         </div>
     </div>
 </template>
@@ -11,18 +15,17 @@
 export default {
     name: "Selector",
     props: ["assets"],
-    created() {
-        console.log("Selector")
-    },
-    methods: {
-        removeChip() {
-            this.$emit('remove-prop');
-        }
-    }
+    created() {},
+    methods: {}
 }
 </script>
 
 <style scoped>
+
+.selected {
+    color: grey;
+}
+
 #asset-bar {
     position: absolute;
     text-align: center;

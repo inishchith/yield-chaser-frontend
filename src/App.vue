@@ -1,59 +1,27 @@
 <template>
   <div id="app">
     <Header :wallet="walletInfo"/>
-    <Selector @remove-prop="removeAsset" :assets="assets"/>
-    <div id="container">
-      <div id="product-title"> Welcome </div>
-        <!-- <div v-on:click="logout()" id="login">Logout</div> -->
-    </div>
+    <router-view/>
   </div>
 </template>
 
 <script>
 import Header from './components/Header.vue'
-import Selector from './components/Selector.vue'
 
 export default {
   name: "App",
   data() {
-    return {
+    return  {
       walletInfo: {
         type: "default",
         id: "0x1234"
       },
-      assets: [
-        {
-          id: 1,
-          name: "BTC",
-        },
-        {
-          id: 2,
-          name: "ETH",
-        },
-        {
-          id: 3,
-          name: "MATIC",
-        },
-        {
-          id: 4,
-          name: "DOGE",
-        },
-      ]
     }
   },
   components: {
     Header,
-    Selector
   },
-  created() {
-
-  },
-  methods: {
-    removeAsset() {
-      this.assets.pop();
-    }
-  }
-};
+}
 </script>
 
 <style>
