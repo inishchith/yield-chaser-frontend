@@ -1,7 +1,9 @@
 <template>
 	<div id="app">
-		<Header :wallet="walletInfo" />
-		<router-view />
+		<div class="container">
+			<Header :wallet="walletInfo" />
+			<router-view />
+		</div>
 	</div>
 </template>
 
@@ -18,7 +20,7 @@ export default {
 			walletInfo: {
 				type: "default",
 				id: "0x1234",
-			},
+			}
 		};
 	},
 };
@@ -41,12 +43,16 @@ export default {
 }
 
 body {
+	position: absolute;
 	background-color: var(--background-color);
 	color: var(--text-color);
+	width: 100%;
+	height: 100%;
 	font-family: "Inter", sans-serif;
 	margin: 0;
 	padding: 0;
 }
+
 #topbar {
 	width: 100%;
 	margin-top: 3%;
@@ -81,11 +87,10 @@ li {
 	position: absolute;
 	text-align: center;
 	justify-content: center;
-	width: 50vh;
+	width: 60vh;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	/* border: 1px dotted white; */
 }
 
 #product-title {

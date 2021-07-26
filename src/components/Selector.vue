@@ -1,22 +1,22 @@
 <template>
 	<c-Box rounded="lg" bg="var(--def-color)">
-		<c-heading p="3" size="lg" font-size="24px"> Choose your Assets </c-heading>
-		<c-flex padding="6" direction="row" wrap="wrap" justify-content="left">
-			<c-tag
+		<c-heading p="3" size="lg" font-size="24px"> Choose your assets </c-heading>
+		<c-flex padding="6" direction="row" wrap="wrap" justify-content="center">
+			<c-button
 				v-for="asset in assets"
 				:key="asset.id"
-				size="lg"
+				width="10vh"
 				mr="3"
 				ml="3"
 				mb="2"
-				mt="4"
-				variant-color="vue">
-				<span @click="$emit('deselect-asset', asset)">
-					<c-tag-label> {{ asset.name }} </c-tag-label>
-					<c-tag-icon v-if="!asset.selected" icon="add" size="2" />
-					<c-tag-icon v-else icon="close" size="2" />
-				</span>
-			</c-tag>
+				mt="2"
+				p="1"
+				:icon-size="1"
+				@click="$emit('deselect-asset', asset)"
+				:right-icon="asset.selected ? '': ''"
+				variant-color="vue" :variant="asset.selected ? 'solid' : 'outline'">
+			{{ asset.name }}
+			</c-button>
 		</c-flex>
 	</c-Box>
 </template>
@@ -25,18 +25,14 @@
 import {
 	CBox,
 	CHeading,
-	CTag,
-	CTagIcon,
-	CTagLabel,
-	CFlex,
+	CButton,
+	CFlex
 } from "@chakra-ui/vue";
 
 export default {
 	name: "Selector",
 	components: {
-		CTag,
-		CTagIcon,
-		CTagLabel,
+		CButton,
 		CFlex,
 		CBox,
 		CHeading,
@@ -49,16 +45,3 @@ export default {
 	methods: {},
 };
 </script>
-
-<style scoped>
-.selected {
-	color: grey;
-}
-
-/* #asset-bar {
-	position: absolute;
-	text-align: center;
-	justify-content: center;
-	width: 100%;
-} */
-</style>

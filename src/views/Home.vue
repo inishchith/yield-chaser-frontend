@@ -9,7 +9,7 @@
 			right-icon="arrow-forward"
 			size="md"
 			height="50px"
-			width="50vh"
+			width="60vh"
 			variant-color="vue"
 			variant="solid"
 			@click="openModal">
@@ -180,5 +180,3 @@ export default {
 	},
 };
 </script>
-
-<style></style>
