@@ -5,34 +5,40 @@
 			@deselect-asset="deselectAsset"
 			@remove-asset="removeAsset"/>
 		<br />
-		<c-button
-			right-icon="arrow-forward"
-			size="md"
-			height="50px"
-			width="60vh"
-			variant-color="vue"
-			variant="solid"
-			@click="openModal">
-			Subscribe to channel
-		</c-button>
-		<c-modal
-			:is-open="isModalOpen"
-			:on-close="closeModal"
-			:close-on-overlay-click="true">
-			<c-modal-content ref="content">
-				<c-modal-header color="black"> Confirm Subscription </c-modal-header>
-				<c-modal-close-button />
-				<c-modal-body color="black">
-					The content provided this website does not constitute investment
-					advice, financial advice, trading advice, or any other advice.
-				</c-modal-body>
-				<c-modal-footer>
-					<c-button variant-color="blue" mr="3"> Save </c-button>
-					<c-button @click="closeModal"> Cancel </c-button>
-				</c-modal-footer>
-			</c-modal-content>
-			<c-modal-overlay />
-		</c-modal>
+		<span v-if="!isSubscribed">
+			<c-button
+				right-icon="arrow-forward"
+				size="md"
+				height="50px"
+				width="60vh"
+				variant-color="vue"
+				variant="solid"
+				@click="confirmSubscribe">
+				Subscribe to channel
+			</c-button>
+		</span>
+		<span v-else>
+			<c-button-group :spacing="6">
+				<c-button
+					size="md"
+					height="50px"
+					width="28vh"
+					variant-color="vue"
+					variant="solid"
+					@click="updateAssets">
+					Update assets
+				</c-button>
+				<c-button
+					size="md"
+					height="50px"
+					width="28vh"
+					variant-color="red"
+					variant="solid"
+					@click="confirmUnsubscribe">
+					Unsubscribe to channel
+				</c-button>
+			</c-button-group>
+		</span>
 	</div>
 </template>
 
@@ -40,13 +46,7 @@
 import Selector from "@/components/Selector.vue";
 import {
 	CButton,
-	CModal,
-	CModalOverlay,
-	CModalContent,
-	CModalHeader,
-	CModalFooter,
-	CModalBody,
-	CModalCloseButton,
+	CButtonGroup,
 } from "@chakra-ui/vue";
 
 export default {
@@ -54,89 +54,104 @@ export default {
 	components: {
 		Selector,
 		CButton,
-		CModal,
-		CModalOverlay,
-		CModalContent,
-		CModalHeader,
-		CModalFooter,
-		CModalBody,
-		CModalCloseButton,
+		CButtonGroup
 	},
 	data() {
 		return {
-			isModalOpen: false,
-			assets: [
-				{
-					id: 1,
-					name: "ETH",
-					selected: false,
-				},
-				{
-					id: 2,
-					name: "YFI",
-					selected: false,
-				},
-				{
-					id: 3,
-					name: "MATIC",
-					selected: false,
-				},
-				{
-					id: 4,
-					name: "WETH",
-					selected: false,
-				},
-				{
-					id: 5,
-					name: "DAI",
-					selected: false,
-				},
-				{
-					id: 6,
-					name: "CRV",
-					selected: false,
-				},
-				{
-					id: 7,
-					name: "WBTC",
-					selected: false,
-				},
-				{
-					id: 8,
-					name: "BAL",
-					selected: false,
-				},
-				{
-					id: 9,
-					name: "BUSD",
-					selected: false,
-				},
-				{
-					id: 10,
-					name: "USDC",
-					selected: false,
-				},
-				{
-					id: 11,
-					name: "MKR",
-					selected: false,
-				},
-				{
-					id: 12,
-					name: "AAVE",
-					selected: false,
-				},
-			],
+			isSubscribed: false,
+			assets: [],
 		};
 	},
 	computed: {},
-	created() {},
+	created() {
+		this.assets = this.$web2Utils.getSupportedAssets();
+	},
 	methods: {
-		openModal() {
-			this.isModalOpen = true;
+		async confirmSubscribe() {
+			if (!this.$web3Utils.isUserLoggedIn()) {
+				this.$toast({
+					title: "Connect your wallet",
+					status: "error",
+					duration: 2000,
+					position: "bottom-left",
+					isClosable: false,
+				});
+				return;
+			}
+
+			console.log(this.assets);
+			// TODO: API call to backend
+
+			// NOTE: Commented for better tests ATM
+			// let receipt = await this.$web3Utils.subscribe();
+			// this.notify(receipt);
+
+			this.$router.push(
+				{
+					name: "Update",
+					params: {
+						title: " Subscribed successfully",
+						text: "Head over to to your EPNS app our welcome notification is waiting for you",
+						icon: "check-circle",
+					}
+				}
+			)
 		},
-		closeModal() {
-			this.isModalOpen = false;
+		// TODO: Update assets call
+		updateAssets() {
+			this.$toast({
+				title: "Changes Saved",
+				status: "success",
+				duration: 2000,
+				position: "bottom-left",
+				isClosable: false,
+			});
+		},
+		async confirmUnsubscribe() {
+			console.log(this.assets);
+			// TODO: API call to backend
+
+			// NOTE: Commented for better tests ATM
+			// let result = await this.$web3Utils.unsubscribe();
+			// this.notify(result);
+
+			this.$router.push(
+				{
+					name: "Update",
+					params: {
+						title: "Unsubscribed successfully",
+						text: "We hate to see you going, hoping to see you back soon :)",
+						icon: "exclamation",
+					}
+				}
+			)
+		},
+		notify(result) {
+			// TODO:
+			// - Add is logged in | subscribe button disabled
+			// - Add loading button for Txn
+
+			console.log(result);
+			if (result.status) {
+				console.log(result);
+				this.$toast({
+					title: "Subscribed!",
+					description: "message which is intentionally happy sounding lol",
+					status: "success",
+					duration: 2000,
+					position: "bottom-left",
+					isClosable: true,
+				});
+			} else {
+				this.$toast({
+					title: "Something went wrong",
+					description: `https://ropsten.etherscan.io/tx/${result.receipt["transactionHash"]}`,
+					status: "error",
+					duration: 2000,
+					position: "bottom-left",
+					isClosable: true,
+				});
+			}
 		},
 		removeAsset(_asset) {
 			this.$toast({

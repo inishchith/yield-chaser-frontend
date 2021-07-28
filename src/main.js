@@ -7,9 +7,14 @@ import Chakra, {
 } from "@chakra-ui/vue";
 import App from "./App.vue";
 import router from "./router";
-
+import Web2Utils from './services/web2Utils';
+import Web3Utils from './services/web3Utils';
 
 Vue.config.productionTip = false;
+
+Vue.prototype.$web2Utils = new Web2Utils();
+Vue.prototype.$web3Utils = new Web3Utils();
+
 
 Vue.use(Chakra);
 
