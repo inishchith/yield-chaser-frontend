@@ -61,6 +61,10 @@ export default class Web3Utils {
         return this.userLoggedIn;
     }
 
+    getWalletAddress() {
+        return this.walletAddress;
+    }
+
     openWallet() {
         this.portis.showPortis();
     }

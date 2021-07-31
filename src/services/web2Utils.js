@@ -1,20 +1,50 @@
+const axios = require('axios');
+
 export default class Web2Utils {
 
-    constructor() {}
-
-    isSubscribed() {
-        // TODO: API CALL
-        // true {status: true, data: []}
-        // false {status: false, }
+    constructor() {
+        this.baseUrl = "https://ychase.herokuapp.com/wallet";
     }
 
-    unsubscribe() {
-        // TODO: Unsubscribe 
+    async isSubscribed(walletAddress) {
+        try {
+            let result = await axios.get(`${this.baseUrl}/${walletAddress}`);
+            return {
+                status: true,
+                assets: result.data.assets
+            }
+        } catch(e) {
+            return { status: false };
+        }
     }
 
-    subscribe() {
-        // TODO: Subscribe UPSERT
+    async subscribe(assets, walletAddress) {
+        let payload = {
+            "walletAddress": walletAddress,
+            "assets": assets,
+        }
 
+        try {
+            let result = await axios.post(`${this.baseUrl}/${walletAddress}`, payload);
+            return {
+                status: true,
+                assets: result.data.assets
+            }
+        } catch(e) {
+            return { status: false };
+        }
+    }
+
+    async unsubscribe(walletAddress) {
+        try {
+            let result = await axios.delete(`${this.baseUrl}/${walletAddress}`);
+            return {
+                status: true,
+                assets: result,
+            }
+        } catch(e) {
+            return { status: false };
+        }
     }
 
     getSupportedAssets() {

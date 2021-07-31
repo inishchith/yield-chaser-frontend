@@ -2,7 +2,7 @@
 	<div id="container">
 		<Selector
 			:assets="assets"
-			@deselect-asset="deselectAsset"
+			@deselect-asset="toggelAsset"
 			@remove-asset="removeAsset"/>
 		<br />
 		<span v-if="!isSubscribed">
@@ -63,7 +63,19 @@ export default {
 		};
 	},
 	computed: {},
-	created() {
+	async created() {
+		if (this.$web3Utils.isUserLoggedIn()) {
+			var result = await this.$web2Utils.isSubscribed(this.$$web3Utils.getWalletAddress());
+			if (result.status) {
+				this.isSubscribed = result.status;
+				console.log(result.assets);
+
+				// TODO: mark assets as selected
+				// result.assets.array.forEach(element => {
+				// });
+			}
+		}
+
 		this.assets = this.$web2Utils.getSupportedAssets();
 	},
 	methods: {
@@ -81,10 +93,11 @@ export default {
 
 			console.log(this.assets);
 			// TODO: API call to backend
+			// let status = await this.$web2Utils.subscribe();
 
 			// NOTE: Commented for better tests ATM
-			// let receipt = await this.$web3Utils.subscribe();
-			// this.notify(receipt);
+			let receipt = await this.$web3Utils.subscribe();
+			this.notify(receipt);
 
 			this.$router.push(
 				{
@@ -109,11 +122,11 @@ export default {
 		},
 		async confirmUnsubscribe() {
 			console.log(this.assets);
-			// TODO: API call to backend
+			// let status = await this.$web2Utils.unsubscribe();
 
 			// NOTE: Commented for better tests ATM
-			// let result = await this.$web3Utils.unsubscribe();
-			// this.notify(result);
+			let result = await this.$web3Utils.unsubscribe();
+			this.notify(result);
 
 			this.$router.push(
 				{
@@ -164,7 +177,7 @@ export default {
 
 			this.assets = this.assets.filter((asset) => asset.id !== _asset.id);
 		},
-		deselectAsset(_asset) {
+		toggelAsset(_asset) {
 			if (_asset.selected) {
 				this.$toast({
 					title: "Asset Removed",
