@@ -1,5 +1,4 @@
 .DS_Store
-/dist
 
 
 # local env files
@@ -103,7 +102,6 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
