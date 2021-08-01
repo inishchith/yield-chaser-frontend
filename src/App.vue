@@ -74,13 +74,21 @@ ul {
 	position: absolute;
 	right: 8%;
 	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	padding: 0px;
 }
 
 li {
-	margin: 0 10px;
+	margin: 0 12px;
 	display: inline;
 	font-size: 18px;
 	font-weight: bold;
+	cursor: pointer;
+}
+
+li:hover {
+	color: var(--link-text);
 }
 
 #container {
@@ -105,7 +113,7 @@ a {
 }
 
 a:hover {
-	color: #028b75;
+	color: var(--link-text);
 }
 
 ::selection {
@@ -120,7 +128,7 @@ a:hover {
 
 @media screen and (max-width: 768px) {
 	:root {
-		--author: #028b75;
+		--author: #55c392;
 		--link-text: #888;
 		--background-color: #0c0c0c;
 		--text-color: #ffffff;
@@ -130,7 +138,7 @@ a:hover {
 
 @media screen and (min-width: 768px) {
 	:root {
-		--link-text: #028b75;
+		--link-text: #55c392;
 		--author: #1a2537;
 		--background-color: #0c0c0c;
 		--text-color: #ffffff;

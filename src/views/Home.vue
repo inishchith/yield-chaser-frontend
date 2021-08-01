@@ -2,11 +2,13 @@
 	<div id="container">
 		<Selector
 			:assets="assets"
-			@deselect-asset="toggelAsset"
+			@toggle-asset="toggelAsset"
 			@remove-asset="removeAsset"/>
 		<br />
 		<span v-if="!isSubscribed">
 			<c-button
+				:is-loading="isSubActionLoading"
+				:is-disabled="isSubDisabled"
 				right-icon="arrow-forward"
 				size="md"
 				height="50px"
@@ -20,15 +22,19 @@
 		<span v-else>
 			<c-button-group :spacing="6">
 				<c-button
+					:is-loading="isSubActionLoading"
+					:is-disabled="isSubDisabled"
 					size="md"
 					height="50px"
 					width="28vh"
 					variant-color="vue"
 					variant="solid"
-					@click="updateAssets">
+					@click="confirmSubscribe">
 					Update assets
 				</c-button>
 				<c-button
+					:is-loading="isUnsubActionLoading"
+					:is-disabled="isUnsubDisabled"
 					size="md"
 					height="50px"
 					width="28vh"
@@ -59,28 +65,43 @@ export default {
 	data() {
 		return {
 			isSubscribed: false,
-			assets: [],
+			isSubActionLoading: false,
+			isUnsubActionLoading: false,
+			isSubDisabled: false,
+			isUnsubDisabled: false,
+			assets: {},
 		};
 	},
 	computed: {},
 	async created() {
-		if (this.$web3Utils.isUserLoggedIn()) {
-			var result = await this.$web2Utils.isSubscribed(this.$$web3Utils.getWalletAddress());
-			if (result.status) {
-				this.isSubscribed = result.status;
-				console.log(result.assets);
-
-				// TODO: mark assets as selected
-				// result.assets.array.forEach(element => {
-				// });
-			}
-		}
-
 		this.assets = this.$web2Utils.getSupportedAssets();
 	},
+	async mounted() {
+		let that = this;
+		this.$root.$on('setSubscriptions', async () => {
+			await that.setSubscribedAssets();
+		});
+		this.$root.$on('releaseSubscriptions', () => {
+			that.isSubscribed = false;
+			that.assets = this.$web2Utils.getSupportedAssets();
+		});
+	},
 	methods: {
+		async setSubscribedAssets() {
+			if (this.$web3Utils.isUserLoggedIn()) {
+				var result = await this.$web2Utils.isSubscribed(this.$web3Utils.getWalletAddress());
+				if (result.status) {
+					this.isSubscribed = result.status;
+					for(const _key of result.assets) {
+						this.assets[_key].selected = true;
+					}
+				}
+			}
+		},
 		async confirmSubscribe() {
+			this.isSubActionLoading = true;
 			if (!this.$web3Utils.isUserLoggedIn()) {
+				this.isSubActionLoading = false;
 				this.$toast({
 					title: "Connect your wallet",
 					status: "error",
@@ -91,24 +112,35 @@ export default {
 				return;
 			}
 
-			console.log(this.assets);
-			// TODO: API call to backend
-			// let status = await this.$web2Utils.subscribe();
+			let selectedAssets = [];
+
+			for(const _key of Object.keys(this.assets)) {
+				if (this.assets[_key].selected) selectedAssets.push(_key);
+			}
+
+			let status = await this.$web2Utils.subscribe(
+				selectedAssets,
+				this.$web3Utils.getWalletAddress()
+			);
+			console.debug(status);
 
 			// NOTE: Commented for better tests ATM
 			let receipt = await this.$web3Utils.subscribe();
 			this.notify(receipt);
 
-			this.$router.push(
-				{
-					name: "Update",
-					params: {
-						title: " Subscribed successfully",
-						text: "Head over to to your EPNS app our welcome notification is waiting for you",
-						icon: "check-circle",
+			this.isSubActionLoading = false;
+			if(status) {
+				this.$router.push(
+					{
+						name: "Update",
+						params: {
+							title: "Subscribed successfully",
+							text: "Head over to to your EPNS app our welcome notification is waiting for you",
+							icon: "check-circle",
+						}
 					}
-				}
-			)
+				)
+			}
 		},
 		// TODO: Update assets call
 		updateAssets() {
@@ -121,13 +153,14 @@ export default {
 			});
 		},
 		async confirmUnsubscribe() {
-			console.log(this.assets);
-			// let status = await this.$web2Utils.unsubscribe();
-
-			// NOTE: Commented for better tests ATM
+			this.isUnsubActionLoading = true;
+			console.debug(this.assets);
+			let status = await this.$web2Utils.unsubscribe(this.$web3Utils.getWalletAddress());
+			console.debug(status);
 			let result = await this.$web3Utils.unsubscribe();
 			this.notify(result);
 
+			this.isUnsubActionLoading = false;
 			this.$router.push(
 				{
 					name: "Update",
@@ -144,14 +177,13 @@ export default {
 			// - Add is logged in | subscribe button disabled
 			// - Add loading button for Txn
 
-			console.log(result);
+			console.info(result);
 			if (result.status) {
-				console.log(result);
 				this.$toast({
 					title: "Subscribed!",
 					description: "message which is intentionally happy sounding lol",
 					status: "success",
-					duration: 2000,
+					duration: 4000,
 					position: "bottom-left",
 					isClosable: true,
 				});
@@ -160,7 +192,7 @@ export default {
 					title: "Something went wrong",
 					description: `https://ropsten.etherscan.io/tx/${result.receipt["transactionHash"]}`,
 					status: "error",
-					duration: 2000,
+					duration: 4000,
 					position: "bottom-left",
 					isClosable: true,
 				});
@@ -177,11 +209,11 @@ export default {
 
 			this.assets = this.assets.filter((asset) => asset.id !== _asset.id);
 		},
-		toggelAsset(_asset) {
-			if (_asset.selected) {
+		toggelAsset(_asset_key) {
+			if (this.assets[_asset_key].selected) {
 				this.$toast({
 					title: "Asset Removed",
-					description: `Removed ${_asset.name} from selection`,
+					description: `Removed ${_asset_key} from selection`,
 					status: "error",
 					duration: 2000,
 					position: "bottom-left",
@@ -190,7 +222,7 @@ export default {
 			} else {
 				this.$toast({
 					title: "Asset Added",
-					description: `Added ${_asset.name} to selection`,
+					description: `Added ${_asset_key} to selection`,
 					status: "success",
 					duration: 2000,
 					position: "bottom-left",
@@ -198,7 +230,8 @@ export default {
 				});
 			}
 
-			_asset.selected = !_asset.selected;
+			this.assets[_asset_key].selected = !this.assets[_asset_key].selected;
+			// _asset.selected = !_asset.selected;
 
 			// this.assets = this.assets.map((asset) =>
 			//   asset.id === assetId ? { ...asset, selected: !asset.selected } : asset

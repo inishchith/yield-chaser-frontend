@@ -12,6 +12,8 @@
 				<li v-if="isUserLoggedIn == true">
 					<span id="highlight" @click="showUserWallet()">
 						{{ shortWalletAddress }}</span>
+				</li>
+				<li v-if="isUserLoggedIn == true"> 
 					<span @click="userLogout()"> Logout </span>
 				</li>
 				<li v-else>
@@ -44,25 +46,27 @@ export default {
 	},
 	async created() {
 		let status = await this.$web3Utils.checkUserLoggedIn();
-		if (status) this.setLogin();
+		if (status) this.userLogin();
 	},
 	mounted() {},
 	methods: {
 		async connectWallet() {
 			let status = await this.$web3Utils.login();
-			if (status) this.setLogin();
-		},
-		userLogout() {
-			this.isUserLoggedIn = false;
-			this.$web3Utils.logout();
+			if (status) this.userLogin();
 		},
 		showUserWallet() {
 			this.$web3Utils.openWallet();
 		},
-		setLogin() {
-			this.walletAddress = localStorage.getItem("walletAddress");
-			this.isUserLoggedIn = true;
+		userLogout() {
+			this.isUserLoggedIn = false;
+			this.$web3Utils.logout();
+			this.$root.$emit('releaseSubscription');
 		},
+		userLogin() {
+			this.walletAddress = this.$web3Utils.getWalletAddress();
+			this.isUserLoggedIn = true;
+			this.$root.$emit('setSubscriptions');
+		}
 	},
 };
 </script>
@@ -73,14 +77,14 @@ export default {
 	font-size: 16px;
 	text-align: center;
 	justify-content: center;
-	padding: 10px;
-	border-radius: 12px;
+	padding: 8px;
+	border-radius: 8px;
 	background-color: var(--def-color);
 }
 
 #highlight:hover {
+	color: var(--link-text);
 	font-size: 16px;
-	border-radius: 16px;
-	cursor: pointer;
+	border-radius: 8px;
 }
 </style>

@@ -3,8 +3,8 @@
 		<c-heading p="3" size="lg" font-size="24px"> Choose your assets </c-heading>
 		<c-flex padding="6" direction="row" wrap="wrap" justify-content="center">
 			<c-button
-				v-for="asset in assets"
-				:key="asset.id"
+			 	v-for="(value, key) in assets" 
+				:key="key"
 				width="10vh"
 				mr="3"
 				ml="3"
@@ -12,10 +12,10 @@
 				mt="2"
 				p="1"
 				:icon-size="1"
-				@click="$emit('deselect-asset', asset)"
-				:right-icon="asset.selected ? '': ''"
-				variant-color="vue" :variant="asset.selected ? 'solid' : 'outline'">
-			{{ asset.name }}
+				@click="$emit('toggle-asset', key)"
+				:right-icon="value.selected ? '': ''"
+				variant-color="vue" :variant="value.selected ? 'solid' : 'outline'">
+				{{ key }}
 			</c-button>
 		</c-flex>
 	</c-Box>

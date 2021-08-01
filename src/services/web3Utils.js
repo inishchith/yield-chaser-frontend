@@ -12,7 +12,7 @@ export default class Web3Utils {
         this.walletAddress = null;
 
 		this.portis.onLogout(() => {
-			console.log("User logged out");
+			console.info("User logged out");
 		});
     }
 
@@ -27,7 +27,7 @@ export default class Web3Utils {
         let that = this;
         let { status } = await new Promise((resolve, reject) => {
             that.portis.onLogin((walletAddress, email, reputation) => {
-                console.log("User logged in", walletAddress, email, reputation);
+                console.info("User logged in", walletAddress, email, reputation);
 
                 localStorage.setItem("walletAddress", walletAddress);
                 that.userLoggedIn = true;
@@ -37,12 +37,11 @@ export default class Web3Utils {
             });
 
             that.portis.onError(error => {
-                console.log('error', error);
+                console.error(error);
                 reject({status: false})
             });
         });
 
-        console.log(status);
         if (status) {
             return true;
         } else {
@@ -71,12 +70,16 @@ export default class Web3Utils {
 
     async checkUserLoggedIn() {
         let { result } = await this.portis.isLoggedIn();
+        this.userLoggedIn = result;
+        if (result) {
+            this.walletAddress = localStorage.getItem("walletAddress");
+        }
         return result;
     }
 
     async signTransaction(tx) {
         const signedTx = await this.web3.eth.signTransaction(tx, tx.from);
-        console.log(signedTx)
+        console.debug(signedTx)
         const sentTx = this.web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
 
         const result = await new Promise((resolve, reject) => {

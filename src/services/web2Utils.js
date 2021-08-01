@@ -3,7 +3,7 @@ const axios = require('axios');
 export default class Web2Utils {
 
     constructor() {
-        this.baseUrl = "https://ychase.herokuapp.com/wallet";
+        this.baseUrl = "https://salty-escarpment-75760.herokuapp.com/wallet";
     }
 
     async isSubscribed(walletAddress) {
@@ -49,67 +49,43 @@ export default class Web2Utils {
 
     getSupportedAssets() {
 
-        return [
-            {
-                id: 1,
-                name: "ETH",
+        return {
+            "ETH": {
                 selected: false,
             },
-            {
-                id: 2,
-                name: "YFI",
+            "YFI": {
                 selected: false,
             },
-            {
-                id: 3,
-                name: "MATIC",
+            "MATIC": {
                 selected: false,
             },
-            {
-                id: 4,
-                name: "WETH",
+            "WETH": {
                 selected: false,
             },
-            {
-                id: 5,
-                name: "DAI",
+            "DAI": {
                 selected: false,
             },
-            {
-                id: 6,
-                name: "CRV",
+            "CRV": {
                 selected: false,
             },
-            {
-                id: 7,
-                name: "WBTC",
+            "WBTC": {
                 selected: false,
             },
-            {
-                id: 8,
-                name: "BAL",
+            "BAL": {
                 selected: false,
             },
-            {
-                id: 9,
-                name: "BUSD",
+            "BUSD": {
                 selected: false,
             },
-            {
-                id: 10,
-                name: "USDC",
+            "USDC": {
                 selected: false,
             },
-            {
-                id: 11,
-                name: "MKR",
+            "MKR": {
                 selected: false,
             },
-            {
-                id: 12,
-                name: "AAVE",
+            "AAVE": {
                 selected: false,
             }
-        ]
+        }
     }
 }
