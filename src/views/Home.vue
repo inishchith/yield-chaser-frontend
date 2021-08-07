@@ -1,5 +1,11 @@
 <template>
 	<div id="container">
+		<c-box m=auto max-w="40rem">
+			<c-heading mb="4">Yield Chaser</c-heading>
+			<c-text font-size="xl">
+				EPNS based notification service to keep track with best yield farms out there with assets of your choice
+			</c-text>
+		</c-box>
 		<Selector
 			:assets="assets"
 			@toggle-asset="toggelAsset"
@@ -53,6 +59,9 @@ import Selector from "@/components/Selector.vue";
 import {
 	CButton,
 	CButtonGroup,
+	CHeading,
+	CText,
+	CBox
 } from "@chakra-ui/vue";
 
 export default {
@@ -60,6 +69,9 @@ export default {
 	components: {
 		Selector,
 		CButton,
+		CHeading,
+		CText,
+		CBox,
 		CButtonGroup
 	},
 	data() {
@@ -77,6 +89,7 @@ export default {
 		this.assets = this.$web2Utils.getSupportedAssets();
 	},
 	async mounted() {
+		await this.setSubscribedAssets();
 		let that = this;
 		this.$root.$on('setSubscriptions', async () => {
 			await that.setSubscribedAssets();
@@ -90,8 +103,8 @@ export default {
 		async setSubscribedAssets() {
 			if (this.$web3Utils.isUserLoggedIn()) {
 				var result = await this.$web2Utils.isSubscribed(this.$web3Utils.getWalletAddress());
+				this.isSubscribed = result.status;
 				if (result.status) {
-					this.isSubscribed = result.status;
 					for(const _key of result.assets) {
 						this.assets[_key].selected = true;
 					}
@@ -124,9 +137,10 @@ export default {
 			);
 			console.debug(status);
 
-			// NOTE: Commented for better tests ATM
-			let receipt = await this.$web3Utils.subscribe();
-			this.notify(receipt);
+			if(!this.isSubscribed) {
+				let receipt = await this.$web3Utils.subscribe();
+				this.notify(receipt);
+			}
 
 			this.isSubActionLoading = false;
 			if(status) {
@@ -135,7 +149,7 @@ export default {
 						name: "Update",
 						params: {
 							title: "Subscribed successfully",
-							text: "Head over to to your EPNS app our welcome notification is waiting for you",
+							status: true,
 							icon: "check-circle",
 						}
 					}
@@ -166,7 +180,7 @@ export default {
 					name: "Update",
 					params: {
 						title: "Unsubscribed successfully",
-						text: "We hate to see you going, hoping to see you back soon :)",
+						status: false,
 						icon: "exclamation",
 					}
 				}

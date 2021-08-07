@@ -1,7 +1,7 @@
 <template>
-	<c-Box rounded="lg" bg="var(--def-color)">
-		<c-heading p="3" size="lg" font-size="24px"> Choose your assets </c-heading>
-		<c-flex padding="6" direction="row" wrap="wrap" justify-content="center">
+	<c-Box m=auto max-w="38rem" mt=12 rounded="lg" bg="var(--def-color)">
+		<c-heading pt="6" pb=3 size="lg" font-size="24px"> Choose your assets </c-heading>
+		<c-flex padding="3" direction="row" wrap="wrap" justify-content="center">
 			<c-button
 			 	v-for="(value, key) in assets" 
 				:key="key"
@@ -10,7 +10,6 @@
 				ml="3"
 				mb="2"
 				mt="2"
-				p="1"
 				:icon-size="1"
 				@click="$emit('toggle-asset', key)"
 				:right-icon="value.selected ? '': ''"

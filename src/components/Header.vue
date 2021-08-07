@@ -1,6 +1,12 @@
 <template>
 	<div id="topbar">
-		<div id="logo"> YC </div>
+		<c-image
+			id="logo"
+			size="60px"
+			objectFit="contain"
+			:src="require('@/assets/yc_logo.png')"
+			alt="Yield Chaser"
+		/>
 		<div id="links">
 			<ul>
 				<li>
@@ -13,7 +19,7 @@
 					<span id="highlight" @click="showUserWallet()">
 						{{ shortWalletAddress }}</span>
 				</li>
-				<li v-if="isUserLoggedIn == true"> 
+				<li v-if="isUserLoggedIn == true">
 					<span @click="userLogout()"> Logout </span>
 				</li>
 				<li v-else>
@@ -25,10 +31,14 @@
 </template>
 
 <script>
+import { CImage } from "@chakra-ui/vue";
 
 export default {
 	name: "Header",
 	props: ["wallet"],
+	components: {
+		CImage
+	},
 	data() {
 		return {
 			web3: null,
@@ -59,8 +69,8 @@ export default {
 		},
 		userLogout() {
 			this.isUserLoggedIn = false;
+			this.$root.$emit('releaseSubscriptions');
 			this.$web3Utils.logout();
-			this.$root.$emit('releaseSubscription');
 		},
 		userLogin() {
 			this.walletAddress = this.$web3Utils.getWalletAddress();

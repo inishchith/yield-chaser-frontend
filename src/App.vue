@@ -2,8 +2,8 @@
 	<div id="app">
 		<div class="container">
 			<Header :wallet="walletInfo" />
-			<router-view />
 		</div>
+		<router-view />
 	</div>
 </template>
 
@@ -130,9 +130,10 @@ a:hover {
 	:root {
 		--author: #55c392;
 		--link-text: #888;
-		--background-color: #0c0c0c;
+		--background-color: #0E0E0C;
 		--text-color: #ffffff;
 		--def-color: #1a2735;
+		--asset-color: #319795;
 	}
 }
 
@@ -140,10 +141,11 @@ a:hover {
 	:root {
 		--link-text: #55c392;
 		--author: #1a2537;
-		--background-color: #0c0c0c;
+		--background-color: #0E0E0C;
 		--text-color: #ffffff;
 		--border-color: #ffffff;
 		--def-color: #1a2735;
+		--asset-color: #319795;
 	}
 }
 </style>
