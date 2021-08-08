@@ -1,4 +1,6 @@
-# ethodyssey-frontend
+# yield-chaser-frontend
+
+[Submission on Devfolio](https://devfolio.co/submissions/yieldchaser-bff9)
 
 ## Project setup
 ```
